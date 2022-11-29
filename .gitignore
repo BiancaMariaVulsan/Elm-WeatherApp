@@ -2,6 +2,7 @@
 elm-stuff
 # elm-repl generated files
 repl-temp-*
+<<<<<<< HEAD
 
 /tests/VerifyExamples
 /.idea
@@ -11,3 +12,5 @@ repl-temp-*
 /*.zip
 /dist
 /__pycache__
+=======
+>>>>>>> 2b320d6ce209c15d25cbb7ee437ef0b4f1ecbef1
