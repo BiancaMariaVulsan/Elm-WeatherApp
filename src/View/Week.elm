@@ -5,7 +5,6 @@ import Html.Attributes exposing (class, style)
 import Html.Events exposing (..)
 import Util.Time exposing (Date, formatDate)
 import View.Day exposing (DailyData)
-import Time
 
 
 type alias WeeklyData =
@@ -32,8 +31,10 @@ view weeklyData =
             getDay : Maybe DailyData -> String
             getDay day = 
               case day of
-                  Just a -> Util.Time.formatDate (.date a)
-                  Nothing -> "No date"
+                  Just a -> 
+                    Util.Time.formatDate (.date a)
+                  Nothing -> 
+                    "No date"
 
         in
           div [class "week"] [

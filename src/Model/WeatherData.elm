@@ -73,14 +73,8 @@ To handle this:
 -}
 toHourlyDataPoints : ApiWeatherData -> List HourlyDataPoint
 toHourlyDataPoints wthData =
-    let
-        getHourly : List Int -> List Float -> List Float -> List HourlyDataPoint
-        getHourly tms temps precip =
-            case (tms, temps, precip) of
-                (x::xs, y::ys, z::zs) -> {time = (Time.millisToPosix ((x + wthData.utcOffset) * 1000)), temperature = y, precipitation = z} :: getHourly xs ys zs
-                (_, _, _) -> []
-    in
-        getHourly wthData.hourly.times wthData.hourly.temperatures wthData.hourly.precipitation
+    List.map3 (\time temp precip -> {time = (Time.millisToPosix ((time + wthData.utcOffset) * 1000)), temperature = temp, precipitation = precip}) 
+        wthData.hourly.times wthData.hourly.temperatures wthData.hourly.precipitation
 
 
 {-| Decode the hourly data according to <https://open-meteo.com/en/docs#api-documentation>

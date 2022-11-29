@@ -4,7 +4,7 @@ module Util exposing (groupBy, maximumBy, maybeToList, minimumBy, zipFilter)
 -}
 import List exposing (minimum)
 import Html exposing (a)
-import Set
+
 
 
 {-| Description for minimumBy
@@ -18,15 +18,7 @@ import Set
 -}
 minimumBy : (a -> comparable) -> List a -> Maybe a
 minimumBy f lst =
-    case lst of
-        [] -> Nothing
-        x::xs -> 
-            case (minimumBy f xs) of
-                Nothing -> Just x
-                Just y ->
-                    case (f x) < (f y) of
-                        True -> Just x
-                        False -> Just y
+    lst |> List.map (\x -> (x, f x)) |> List.sortBy (\x -> Tuple.second x) |> List.head |> Maybe.map Tuple.first
 
 
 {-| Description for maximumBy
@@ -40,15 +32,7 @@ minimumBy f lst =
 -}
 maximumBy : (a -> comparable) -> List a -> Maybe a
 maximumBy f lst =
-    case lst of
-        [] -> Nothing
-        x::xs -> 
-            case (maximumBy f xs) of
-                Nothing -> Just x
-                Just y ->
-                    case (f x) > (f y) of
-                        True -> Just x
-                        False -> Just y
+    lst |> List.map (\x -> (x, f x)) |> List.sortBy (\x -> Tuple.second x) |> List.reverse |> List.head |> Maybe.map Tuple.first
 
 
 {-| Group a list
@@ -63,27 +47,9 @@ maximumBy f lst =
 groupBy : (a -> b) -> List a -> List ( b, List a )
 groupBy f lst =
     let
-        idList = lst |> List.foldl (\x res -> if List.member (f x) res == True then res else res ++ [(f x)]) []
+        idList = lst |> List.foldl (\x res -> if (List.member (f x) res) == True then res else res ++ [(f x)]) []
     in
         idList |> List.map (\x -> (x, (List.filter (\y -> f y == x) lst)))
-
-    -- let
-    --     helper : a -> b -> List (b, List a) -> List (b, List a)
-    --     helper elem bucket crtList= 
-    --         case crtList of
-    --             [] -> [(bucket, [elem])]
-    --             (b, group)::groups -> 
-    --                 if b == bucket then
-    --                     (b, (elem :: group)) :: groups
-    --                 else
-    --                     helper elem bucket groups ++ [(b, group)]
-    -- in
-    --     case lst of
-    --         [] -> []
-    --         x::xs -> helper x (f x) (groupBy f xs)
-    
-
-    
 
 
 
@@ -97,8 +63,10 @@ groupBy f lst =
 maybeToList : Maybe a -> List a
 maybeToList elem =
     case elem of 
-        Just a -> [a]
-        Nothing -> []
+        Just a -> 
+            [a]
+        Nothing -> 
+            []
 
 
 {-| Filters a list based on a list of bools
@@ -112,10 +80,4 @@ maybeToList elem =
 -}
 zipFilter : List Bool -> List a -> List a
 zipFilter lb lst =
-    case (lb, lst) of 
-        (y::ys, x::xs) ->
-            if y == True then
-                x::(zipFilter ys xs)
-            else
-                (zipFilter ys xs)
-        (_, _) -> []
+    lst |> List.map2 Tuple.pair lb |> List.filter (\x -> (Tuple.first x) == True) |> List.map (\x -> Tuple.second x)
